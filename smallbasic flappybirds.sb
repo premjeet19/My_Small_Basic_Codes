@@ -1,0 +1,112 @@
+GraphicsWindow.KeyDown = keyDown
+
+gww = 1300
+gwh = 600
+
+GraphicsWindow.Width = gww
+GraphicsWindow.Height = gwh
+
+backgroundLocation = "C:\Users\Admin\Pictures\background.png"
+background = Shapes.AddImage(backgroundLocation)
+tubeW = 50 
+tubeH = 400
+
+topTubeLocation = "C:\Users\Admin\Pictures\topTube.png"
+bottomTubeLocation = "C:\Users\Admin\Pictures\bottomTube.png"
+
+topTube = Shapes.AddImage(topTubeLocation)
+bottomTube = Shapes.AddImage(bottomTubeLocation)
+
+birdSize = 30
+
+birdLocation = "C:\Users\Admin\Pictures\twitter.png"
+bird = Shapes.AddImage(birdLocation)
+Sub reset
+ birdY =(gwh / 2) - (birdSize/2)
+ birdx = 50
+
+ Shapes.Move(bird,birdx,birdY)
+
+ tubeX = gww
+ changeTubeY()
+
+Shapes.Move(topTube, tubeX, topTubeY)
+
+ birdYChange = 1
+ totalFlaps = 100
+ flapTime= 0
+ isFlap = "False"
+
+EndSub
+
+Sub changetubeX 
+  tubeX = tubeX - 5 
+  Program.Delay(10)
+  
+  If tubeX < 0  - tubeW Then
+    tubeX = gww
+    changeTubeY()
+  EndIf
+EndSub    
+    
+Sub changeTubeY    
+  random = Math.GetRandomNumber(200)
+  topTubeY = random - 200
+  bottomTubeY = topTubeY + 500
+EndSub
+
+
+
+Sub changebirdY  
+  birdY = birdY + birdYChange
+EndSub 
+
+Sub KeyDown
+  isFlap = "True"
+  flapTime = 0
+EndSub
+
+Sub flap
+  If isFlap = "True" Then
+    birdYChange = ((1-(flapTime/(totalFlaps/2))) * -1) *1.8
+    flapTime = flapTime + 1
+ Else
+   birdYChange = 1
+ EndIf
+ 
+ If flapTime =totalFlaps Then
+   isFlap = "False"
+   flapTime = 0
+  EndIf 
+EndSub 
+
+Sub collision
+  If birdY < 0 or birdY + birdSize > gwh Then
+      reset()
+  EndIf
+  
+  If birdx + birdSize > tubeX And birdx < tubeX + tubeW Then
+    If birdY < topTubeY + tubeH Or birdY + birdSize > bottomTubeY Then
+      reset()
+    EndIf
+  EndIf
+  
+  
+EndSub
+
+reset()
+While 1=1
+  Shapes.Move(topTube, tubeX, topTubeY)
+  Shapes.Move(bottomTube,tubeX, bottomTubeY)
+  
+  Shapes.Move(bird, birdx, birdy)
+  
+  changetubeX()
+  
+  changebirdY() 
+
+flap()
+
+ collision()
+
+EndWhile
